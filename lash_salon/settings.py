@@ -156,4 +156,8 @@ DEFAULT_FROM_EMAIL = 'noreply@fleur-nails.ru'
 # ЮKassa (песочница)
 YOOKASSA_SHOP_ID = 'test_shop_id_123456'
 YOOKASSA_SECRET_KEY = 'test_secret_key'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
