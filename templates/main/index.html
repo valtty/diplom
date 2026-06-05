@@ -1,0 +1,185 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block body_class %}fn-page-home{% endblock %}
+
+{% block title %}Fleur Nails{% endblock %}
+
+{% block content %}
+<div class="fn-container fn-home">
+  {# Hero: текст + кнопки в левой колонке, изображение справа на всю высоту (как в Figma) #}
+  <section class="fn-home-hero fn-section" aria-labelledby="hero-title">
+    <div class="fn-home-hero__panel">
+      <div class="fn-home-hero__grid">
+        <div class="fn-home-hero__text">
+          <div class="fn-home-hero__text-frame">
+            <h1 class="fn-home-hero__title" id="hero-title">
+              <span class="fn-home-hero__title-line">Салон Маникюра</span>
+              <span class="fn-home-hero__title-line">Fleur Nails</span>
+            </h1>
+            <p class="fn-home-hero__lead">
+              Маникюр, педикюр и дизайн ногтей<br>
+              в нежной расслабляющей атмосфере, где ваши руки в надёжных руках
+            </p>
+          </div>
+          <div class="fn-home-hero__actions fn-home-hero__actions--tight">
+            <a class="fn-btn fn-btn--hero-primary" href="{% url 'main:appointment_create' %}">Записаться</a>
+            <a class="fn-btn fn-btn--hero-outline" href="{% url 'main:masters' %}">Наши мастера</a>
+          </div>
+        </div>
+        <div class="fn-home-hero__visual">
+          {% if site_settings and site_settings.hero_background %}
+            <img src="{{ site_settings.hero_background.url }}" alt="Fleur Nails" class="fn-home-hero__img" width="505" height="498" loading="eager">
+          {% else %}
+            <img src="{% static 'img/banner.png' %}" alt="" class="fn-home-hero__img" width="505" height="498" loading="eager">
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {# Преимущества — порядок и тексты из Figma #}
+  <section class="fn-home-features" aria-label="Преимущества">
+    <ul class="fn-home-features__list">
+      <li class="fn-home-features__item">
+        <span class="fn-home-features__icon" aria-hidden="true"><i class="bi bi-award"></i></span>
+        <span class="fn-home-features__heading">Опытные мастера</span>
+        <span class="fn-home-features__sub">Более 5 лет опыта у каждого мастера</span>
+      </li>
+      <li class="fn-home-features__item">
+        <span class="fn-home-features__icon" aria-hidden="true"><i class="bi bi-flower2"></i></span>
+        <span class="fn-home-features__heading">Премиум материалы</span>
+        <span class="fn-home-features__sub">Только гипоаллергенные материалы</span>
+      </li>
+      <li class="fn-home-features__item">
+        <span class="fn-home-features__icon" aria-hidden="true"><i class="bi bi-clock-history"></i></span>
+        <span class="fn-home-features__heading">Быстро и качественно</span>
+        <span class="fn-home-features__sub">Наращивание от 1.5 часов</span>
+      </li>
+      <li class="fn-home-features__item">
+        <span class="fn-home-features__icon" aria-hidden="true"><i class="bi bi-shield-check"></i></span>
+        <span class="fn-home-features__heading">Гарантия 100%</span>
+        <span class="fn-home-features__sub">Гарантируем качество работы</span>
+      </li>
+    </ul>
+  </section>
+
+  {# О нас — заголовок секции по центру, затем рамка #}
+  <section class="fn-home-about fn-section" id="about" aria-labelledby="about-page-title">
+    <h2 class="fn-home-page-heading" id="about-page-title">О нас</h2>
+    <div class="fn-home-box fn-home-box--about">
+      <div class="fn-home-about__row">
+        <div class="fn-home-about__media">
+          <img src="/static/img/about1.png" alt="" class="fn-home-about__photo" width="494" height="329" loading="lazy">
+        </div>
+        <div class="fn-home-about__copy fn-home-about__copy--welcome">
+          <p class="fn-home-about__welcome-title">Добро пожаловать в студию маникюра «Fleur Nails»!</p>
+          <p class="fn-home-about__welcome-body">
+            Мы — команда профессиональных мастеров, которые ежедневно дарят красоту и уверенность нашим гостям. У нас уютная, расслабляющая атмосфера, где вы можете забыть о повседневных заботах и посвятить время себе.
+          </p>
+        </div>
+      </div>
+      <div class="fn-home-about__row fn-home-about__row--reverse">
+        <div class="fn-home-about__copy fn-home-about__copy--list">
+          <p class="fn-home-about__list-title">Почему выбирают нас?</p>
+          <ul class="fn-home-about__bullets">
+            <li>— Материалы премиум-класса</li>
+            <li>— Стерилизация инструментов</li>
+            <li>— Индивидуальный подход</li>
+            <li>— Мастера с опытом 5+ лет</li>
+            <li>— Онлайн-запись 24/7</li>
+            <li>— Подарочные сертификаты и бонусная система</li>
+            <li class="fn-home-about__bullet fn-home-about__bullet--location">— Удобное расположение в центре города</li>
+          </ul>
+        </div>
+        <div class="fn-home-about__media">
+          <img src="/static/img/about2.png" alt="" class="fn-home-about__photo fn-home-about__photo--wide" width="540" height="360" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="fn-section" id="works" aria-labelledby="works-title">
+    <h2 class="fn-home-page-heading" id="works-title">Работы наших мастеров</h2>
+    <div class="fn-home-portfolio-mosaic">
+      {% for cell in portfolio_home_cells %}
+        <a class="fn-home-portfolio-mosaic__cell fn-home-portfolio-mosaic__cell--{{ forloop.counter0 }}" href="{{ cell.href }}" aria-label="{{ cell.alt }}">
+          <img src="{{ cell.src }}" alt="{{ cell.alt }}" class="fn-home-portfolio-mosaic__img" loading="lazy" width="480" height="360">
+        </a>
+      {% endfor %}
+    </div>
+    <div class="fn-home-center">
+      <a class="fn-btn fn-btn--cta-wide" href="{% url 'main:portfolio' %}">Все работы</a>
+    </div>
+  </section>
+
+  <section class="fn-section" id="masters" aria-labelledby="masters-title">
+    <h2 class="fn-home-page-heading" id="masters-title">Наши мастера</h2>
+    <div class="fn-home-cards fn-home-cards--masters">
+      {% for master in masters %}
+        <article class="fn-home-master-card fn-home-master-card--fixed">
+          <div class="fn-home-master-card__photo-wrap">
+            {% if master.photo %}
+              <img class="fn-home-master-card__photo" src="{{ master.photo.url }}" alt="{{ master.full_name }}" loading="lazy" width="333" height="288">
+            {% else %}
+              <div class="fn-home-master-card__photo fn-home-master-card__photo--placeholder" role="img" aria-label="Нет фото">Фото</div>
+            {% endif %}
+          </div>
+          <div class="fn-home-master-card__body">
+            <h3 class="fn-home-master-card__name">{{ master.full_name }}</h3>
+            <p class="fn-home-master-card__meta">Стаж: {{ master.experience }} лет{% if master.reviews_count %} · Рейтинг: <strong>{{ master.avg_rating|floatformat:1 }}</strong> ({{ master.reviews_count }} отзывов){% endif %}</p>
+            <p class="fn-home-card-desc-clamp">{{ master.bio|striptags|default:"Профессиональный мастер студии Fleur Nails." }}</p>
+            <div class="fn-home-card-actions">
+              <a class="fn-home-btn-tiny" href="{% url 'main:master_detail' master.pk %}">Подробнее</a>
+            </div>
+          </div>
+        </article>
+      {% empty %}
+        <p class="fn-home-empty">Скоро здесь появятся мастера.</p>
+      {% endfor %}
+    </div>
+    <div class="fn-home-center fn-home-center--spaced">
+      <a class="fn-btn fn-btn--cta-wide" href="{% url 'main:masters' %}">Все мастера</a>
+    </div>
+  </section>
+
+  <section class="fn-section" id="careers" aria-labelledby="careers-title">
+    <div class="fn-home-box fn-home-box--recruit">
+      <h2 class="fn-home-page-heading fn-home-page-heading--in-box" id="careers-title">Ищем мастеров</h2>
+      <div class="fn-home-recruit__intro">
+        <p>Хотите стать частью команды «Fleur Nails»?</p>
+        <p>Мы ищем мастеров маникюра и педикюра, которые любят своё дело и хотят расти вместе с нами.</p>
+        <p>Заполните форму, и мы вам перезвоним</p>
+      </div>
+      <form class="fn-home-recruit__form" method="post" action="{% url 'main:master_job_apply' %}">
+        {% csrf_token %}
+        <div class="fn-home-recruit__grid">
+          <div class="fn-home-field">{{ career_form.full_name }}</div>
+          <div class="fn-home-field">{{ career_form.phone }}</div>
+          <div class="fn-home-field">{{ career_form.email }}</div>
+          <div class="fn-home-field">{{ career_form.experience }}</div>
+        </div>
+        <p class="small text-muted mb-2">Необязательно: ссылка на портфолио</p>
+        <div class="fn-home-field mb-3">{{ career_form.portfolio_url }}</div>
+        <div class="fn-home-center">
+          <button type="submit" class="fn-btn fn-btn--cta-wide">Отправить заявку</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <section class="fn-section" id="services" aria-labelledby="services-title">
+    <h2 class="fn-home-page-heading" id="services-title">Наши услуги</h2>
+    <div class="fn-home-cards fn-home-cards--services">
+      {% for service in services|slice:":3" %}
+        {% include 'main/partials/service_card.html' with service=service compact=True %}
+      {% empty %}
+        <p class="fn-home-empty">Скоро здесь появятся услуги.</p>
+      {% endfor %}
+    </div>
+    <div class="fn-home-center fn-home-center--spaced">
+      <a class="fn-btn fn-btn--cta-wide" href="{% url 'main:services' %}">Все услуги</a>
+    </div>
+  </section>
+</div>
+{% endblock %}

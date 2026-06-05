@@ -1,0 +1,47 @@
+<article class="fn-home-service-card fn-home-service-card--fixed">
+    <div class="fn-service-detail-desc" data-for-service="{{ service.pk }}" hidden>{{ service.description|striptags }}</div>
+    <div class="fn-home-service-card__media">
+        {% if service.image %}
+            <img src="{{ service.image.url }}" class="fn-home-service-card__img" alt="{{ service.name }}" loading="lazy" width="400" height="240">
+        {% else %}
+            <div class="fn-home-service-card__img fn-home-service-card__img--placeholder" role="img" aria-label="Нет фото">Фото услуги</div>
+        {% endif %}
+    </div>
+    <div class="fn-home-service-card__body">
+        {% if compact %}
+            <h3 class="fn-home-service-card__title">{{ service.name }}</h3>
+        {% else %}
+            <h2 class="fn-home-service-card__title">{{ service.name }}</h2>
+        {% endif %}
+        <p class="fn-home-service-card__desc fn-home-card-desc-clamp">{{ service.description|striptags }}</p>
+        <p class="fn-home-service-card__duration">
+            <span class="fn-home-service-card__clock" aria-hidden="true"><i class="bi bi-clock"></i></span>
+            {% if compact %}Длительность: {% endif %}{{ service.duration_minutes }} мин
+        </p>
+        <p class="fn-home-service-card__price">{% if compact %}{{ service.price|floatformat:0 }}₽{% else %}{{ service.price }} ₽{% endif %}</p>
+        <div class="fn-home-card-actions d-grid gap-2">
+            <button type="button"
+                    class="{% if compact %}fn-home-btn-tiny{% else %}fn-btn fn-btn--hero-outline fn-btn--card{% endif %} fn-service-detail-trigger"
+                    data-service-id="{{ service.pk }}"
+                    data-name="{{ service.name }}"
+                    data-price="{{ service.price|floatformat:0 }}"
+                    data-duration="{{ service.duration_minutes }}"
+                    data-category="{% if service.category %}{{ service.category.name }}{% endif %}"
+                    data-image="{% if service.image %}{{ service.image.url }}{% endif %}">
+                Подробнее
+            </button>
+            <a href="{% url 'main:appointment_create' %}?service={{ service.id }}" class="{% if compact %}fn-home-btn-tiny{% else %}fn-btn fn-btn--hero-primary fn-btn--card{% endif %}">Записаться</a>
+        </div>
+
+        {% if user.is_authenticated %}
+        {% if user.role == 'ADMIN' or user.is_superuser %}
+            {% if not compact %}
+            <div class="d-grid gap-2 mt-2">
+                <a href="{% url 'main:service_edit' service.id %}" class="fn-btn fn-btn--hero-outline fn-btn--card">Редактировать</a>
+                <a href="{% url 'main:service_delete' service.id %}" class="fn-btn fn-btn--hero-outline fn-btn--card text-danger border-danger" onclick="return confirm('Вы уверены, что хотите удалить услугу?');">Удалить</a>
+            </div>
+            {% endif %}
+        {% endif %}
+        {% endif %}
+    </div>
+</article>

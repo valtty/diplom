@@ -1,0 +1,58 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Портфолио — Fleur Nails{% endblock %}
+
+{% block content %}
+<div class="fn-container fn-inner-page">
+  <section class="fn-section">
+    <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-3">
+      <h1 class="fn-inner-page__title mb-0">Работы наших мастеров</h1>
+      <a class="fn-btn fn-btn--hero-primary fn-btn--page-sm" href="{% url 'main:appointment_create' %}">Записаться</a>
+    </div>
+
+    <form method="get" class="row g-2 mb-4 align-items-end fn-portfolio-filters">
+      <div class="col-md-3">
+        <label class="form-label small mb-0">Мастер</label>
+        <select name="master" class="form-select form-select-sm" onchange="this.form.submit()">
+          <option value="">Все</option>
+          {% for m in masters %}
+            <option value="{{ m.pk }}" {% if request.GET.master == m.pk|stringformat:"d" %}selected{% endif %}>{{ m.full_name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label small mb-0">Дизайн</label>
+        <select name="design_type" class="form-select form-select-sm" onchange="this.form.submit()">
+          <option value="">Все</option>
+          {% for val, label in design_choices %}
+            <option value="{{ val }}" {% if request.GET.design_type == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label small mb-0">Цвет</label>
+        <select name="color_scheme" class="form-select form-select-sm" onchange="this.form.submit()">
+          <option value="">Все</option>
+          {% for val, label in color_choices %}
+            <option value="{{ val }}" {% if request.GET.color_scheme == val %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <a href="{% url 'main:portfolio' %}" class="fn-btn fn-btn--hero-outline fn-btn--page-sm">Сбросить</a>
+      </div>
+    </form>
+
+    <div class="fn-portfolio-gallery">
+      {% for image in portfolio_images %}
+        <a class="fn-portfolio-gallery__item" href="{% url 'main:master_detail' image.master.pk %}" aria-label="Работа: {{ image.master.full_name }}">
+          <img src="{{ image.image.url }}" alt="{{ image.description|default:image.master.full_name }}" class="fn-portfolio-gallery__img" loading="lazy" width="320" height="400">
+        </a>
+      {% empty %}
+        <div class="fn-portfolio-gallery__empty">Пока нет одобренных работ.</div>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

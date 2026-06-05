@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Fleur Nails{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{% static 'css/globals.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="fn-page-site {% block body_class %}{% endblock %}">
+    <div class="desktop">
+        <header class="header" role="banner">
+            <div class="fn-header-inner">
+            <a class="group" href="{% url 'main:index' %}" aria-label="Fleur Nails">
+                <div class="text-wrapper" aria-label="F N">F N</div>
+                <div class="div">Fleur Nails</div>
+            </a>
+
+            <button class="fn-burger" type="button" aria-label="Открыть меню" id="fnBurger">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <nav class="menu" aria-label="Основная навигация" id="fnMenu">
+                <a href="{% url 'main:services' %}" class="div-wrapper"><span class="text-wrapper-2">Услуги</span></a>
+                <a href="{% url 'main:masters' %}" class="div-wrapper"><span class="text-wrapper-2">Мастера</span></a>
+                <a href="{% url 'main:promotions' %}" class="div-wrapper"><span class="text-wrapper-2">Акции</span></a>
+                <a href="{% url 'main:blog' %}" class="contact-us"><span class="text-wrapper-2">Блог</span></a>
+                <a href="{% url 'main:certificates' %}" class="contact-us-2"><span class="text-wrapper-2">Сертификаты</span></a>
+                <a href="{% url 'main:contacts' %}" class="div-wrapper"><span class="text-wrapper-2">Контакты</span></a>
+            </nav>
+
+            <div class="icons">
+                {% if user.is_authenticated %}
+                    <div class="fn-profile-wrap" id="fnProfileWrap">
+                        <button type="button" class="icon fn-profile-trigger" id="fnProfileTrigger" aria-expanded="false" aria-haspopup="true" aria-controls="fnProfileMenu">
+                            <i class="fa-regular fa-user"></i>
+                        </button>
+                        <div class="fn-profile-menu" id="fnProfileMenu" role="menu" hidden>
+                            <a role="menuitem" class="fn-profile-menu__item" href="{% url 'users:profile' %}">Мой профиль</a>
+                            {% if user.is_staff %}
+                                <a role="menuitem" class="fn-profile-menu__item" href="{% url 'admin:index' %}">Админ-панель Django</a>
+                            {% endif %}
+                            {% if user.role == 'ADMIN' or user.is_superuser %}
+                                <a role="menuitem" class="fn-profile-menu__item" href="{% url 'main:admin_dashboard' %}">Управление сайтом</a>
+                            {% endif %}
+                            <form class="fn-profile-menu__form" action="{% url 'users:logout' %}" method="post">
+                                {% csrf_token %}
+                                <button type="submit" class="fn-profile-menu__logout" role="menuitem">Выйти</button>
+                            </form>
+                        </div>
+                    </div>
+                {% else %}
+                    <a class="icon" href="{% url 'users:login' %}" aria-label="Вход">
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                    </a>
+                {% endif %}
+            </div>
+            </div>
+        </header>
+
+    {% if messages %}
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1200;">
+            {% for message in messages %}
+            <div class="toast align-items-center border-0 mb-2 {% if 'error' in message.tags %}text-bg-danger{% elif 'success' in message.tags %}text-bg-success{% else %}text-bg-secondary{% endif %}" role="alert" data-bs-delay="5000" data-bs-autohide="true">
+                <div class="d-flex">
+                    <div class="toast-body">{{ message }}</div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <main class="fn-page-main">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="fn-footer" id="contacts">
+        <div class="fn-footer__gradient">
+            <div class="fn-container">
+                <div class="fn-footer__grid fn-footer__row">
+                    <div class="fn-footer__grid-cell fn-footer__grid-cell--start">
+                        <a href="{% url 'main:index' %}" class="fn-footer__brand fn-footer__brand--logo" aria-label="Fleur Nails — на главную">
+                            <img class="fn-footer__logo-img" src="{% static 'img/logo.png' %}" alt="Fleur Nails" width="200" height="80" decoding="async">
+                        </a>
+                        <p class="fn-footer__lead mt-3">
+                            Нейл-студия с эстетичным сервисом, стерильными инструментами и уютной атмосферой.
+                        </p>
+                    </div>
+                    <div class="fn-footer__grid-cell fn-footer__grid-cell--center">
+                        <div class="mb-2 fn-footer__heading">Режим работы:</div>
+                        <div class="fn-footer__text" style="white-space: pre-line;">Пн-Пт: 10:00 - 20:00
+Сб: 11:00 - 18:00
+Вс: Выходной</div>
+                    </div>
+                    <div class="fn-footer__grid-cell fn-footer__grid-cell--end">
+                        <div class="mb-3 fn-footer__heading">Контакты</div>
+                        <ul class="fn-footer__contacts list-unstyled mb-0">
+                            <li class="fn-footer__contact-line">
+                                <i class="bi bi-geo-alt fn-footer__contact-icon" aria-hidden="true"></i>
+                                <span>Россия, г. Чита, ул. Шилова, 35А</span>
+                            </li>
+                            <li class="fn-footer__contact-line">
+                                <i class="bi bi-telephone fn-footer__contact-icon" aria-hidden="true"></i>
+                                <a href="tel:+79991234567">+7 (999) 123-45-67</a>
+                            </li>
+                            <li class="fn-footer__contact-line">
+                                <i class="bi bi-envelope fn-footer__contact-icon" aria-hidden="true"></i>
+                                <a href="mailto:info@fleur-nails.ru">info@fleur-nails.ru</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="fn-footer__copy-bar">
+            <div class="fn-container fn-footer__copy-inner">
+                © 2026 Fleur Nails. Все права защищены.
+            </div>
+        </div>
+    </footer>
+
+    {% include 'main/partials/service_detail_modal.html' %}
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const burger = document.getElementById("fnBurger");
+        const menu = document.getElementById("fnMenu");
+        if (burger && menu) {
+          burger.addEventListener("click", () => {
+            menu.classList.toggle("is-open");
+          });
+        }
+      });
+    </script>
+</body>
+</html>

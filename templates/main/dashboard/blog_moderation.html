@@ -1,0 +1,23 @@
+{% extends 'main/base.html' %}
+{% block title %}Модерация статей{% endblock %}
+{% block content %}
+<div class="fn-container">
+    <section class="fn-section">
+    <h1 class="fn-title" style="font-size:40px;">Модерация статей</h1>
+    <div class="fn-card mt-4">
+        <div class="fn-card__body">
+        {% for post in posts %}
+            <div class="border-bottom py-3">
+                <h5 class="mb-1">{{ post.title }}</h5>
+                <p class="mb-2 text-muted">{{ post.excerpt|truncatechars:150 }}</p>
+                <a class="fn-btn fn-btn--hero-primary fn-btn--page-sm" href="{% url 'main:blog_moderate_action' post.id 'approve' %}">Одобрить</a>
+                <a class="fn-btn fn-btn--hero-outline fn-btn--page-sm" href="{% url 'main:blog_moderate_action' post.id 'reject' %}">Отклонить</a>
+            </div>
+        {% empty %}
+            <p class="text-muted">Нет статей для модерации.</p>
+        {% endfor %}
+        </div>
+    </div>
+    </section>
+</div>
+{% endblock %}

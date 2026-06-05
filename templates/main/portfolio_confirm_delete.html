@@ -1,0 +1,31 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Удаление фото{% endblock %}
+
+{% block content %}
+<div class="fn-container">
+    <section class="fn-section">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="fn-card">
+                <div class="fn-card__body">
+                    <h1 class="fn-title" style="font-size:40px;">Подтверждение удаления</h1>
+                    <p class="mb-3">Вы уверены, что хотите удалить это фото?</p>
+                    <img src="{{ image.image.url }}" class="img-fluid mb-3 rounded" alt="{{ image.description }}">
+                    <p class="text-danger">Это действие необратимо!</p>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-grid d-md-flex gap-2 flex-wrap">
+                            <button type="submit" class="fn-btn fn-btn--hero-primary fn-btn--page-sm">Да, удалить</button>
+                            <a href="{% url 'users:profile' %}" class="fn-btn fn-btn--hero-outline fn-btn--page-sm">Отмена</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>
+</div>
+{% endblock %}

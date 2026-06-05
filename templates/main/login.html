@@ -1,0 +1,44 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Вход - Салон наращивания ресниц{% endblock %}
+
+{% block content %}
+<div class="fn-container fn-inner-page">
+    <section class="fn-section">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="fn-card">
+                <div class="fn-card__body">
+                    <h1 class="fn-inner-page__title">Вход</h1>
+                    <form method="post" class="fn-auth-form">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Имя пользователя</label>
+                            <input type="text" name="username" class="form-control" id="id_username" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_password" class="form-label">Пароль</label>
+                            <input type="password" name="password" class="form-control" id="id_password" required>
+                        </div>
+                        
+                        <button type="submit" class="fn-btn fn-btn--hero-primary fn-btn--page-sm w-100">
+                            Войти
+                        </button>
+                    </form>
+                    
+                    <hr class="fn-auth-form__hr">
+                    
+                    <p class="text-center mb-0 fn-auth-form__switch">
+                        Нет аккаунта?
+                        <a href="{% url 'users:signup' %}" class="fn-btn fn-btn--hero-outline fn-btn--page-sm fn-auth-form__switch-btn">Зарегистрироваться</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>
+</div>
+{% endblock %}

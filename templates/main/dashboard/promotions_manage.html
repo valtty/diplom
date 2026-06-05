@@ -1,0 +1,41 @@
+{% extends 'main/base.html' %}
+{% block title %}Управление акциями{% endblock %}
+{% block content %}
+<div class="fn-container">
+    <section class="fn-section">
+    <h1 class="fn-title" style="font-size:40px;">Управление акциями</h1>
+    <div class="row g-4 mt-1">
+        <div class="col-lg-5">
+            <div class="fn-card">
+                <div class="fn-card__body">
+                <div class="fn-card__title" style="font-size:22px;">Добавить акцию</div>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="fn-btn fn-btn--hero-primary fn-btn--page-sm">Сохранить</button>
+                </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="fn-card">
+                <div class="fn-card__body">
+                <div class="fn-card__title" style="font-size:22px;">Список акций</div>
+                {% for promo in promotions %}
+                    <div class="d-flex justify-content-between border-bottom py-2">
+                        <div>
+                            <strong>{{ promo.title }}</strong>
+                            <div class="small text-muted">{{ promo.start_date }} - {{ promo.end_date }}</div>
+                        </div>
+                        <a class="fn-btn fn-btn--hero-outline fn-btn--page-sm" href="{% url 'main:promotion_delete' promo.id %}">Удалить</a>
+                    </div>
+                {% empty %}
+                    <p class="text-muted">Акций пока нет.</p>
+                {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>
+</div>
+{% endblock %}

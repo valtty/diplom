@@ -1,0 +1,20 @@
+{% extends 'main/base.html' %}
+
+{% block title %}Подтверждение удаления{% endblock %}
+
+{% block content %}
+<div class="main-content">
+    <h1 class="page-title">Удаление услуги</h1>
+
+    <p>Вы уверены, что хотите удалить услугу <strong>"{{ service.name }}"</strong>?</p>
+    <p>Это действие необратимо.</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="d-flex flex-wrap gap-2">
+            <button type="submit" class="fn-btn fn-btn--hero-primary fn-btn--page-sm">Да, удалить</button>
+            <a href="{% url 'main:services' %}" class="fn-btn fn-btn--hero-outline fn-btn--page-sm">Отмена</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

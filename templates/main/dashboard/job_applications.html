@@ -1,0 +1,43 @@
+{% extends 'main/base.html' %}
+{% block title %}Заявки мастеров — Fleur Nails{% endblock %}
+{% block content %}
+<div class="fn-container fn-inner-page">
+  <section class="fn-section">
+    <p class="mb-3"><a href="{% url 'main:admin_dashboard' %}">← К панели управления</a></p>
+    <h1 class="fn-inner-page__title">Заявки на работу</h1>
+
+    {% for app in applications %}
+      <div class="fn-admin-card mb-4">
+        <div class="row">
+          <div class="col-md-8">
+            <h2 class="fn-inner-page__subtitle mb-2">{{ app.full_name }}</h2>
+            <p class="mb-1"><strong>Телефон:</strong> {{ app.phone }}</p>
+            <p class="mb-1"><strong>Email:</strong> {{ app.email }}</p>
+            {% if app.experience %}<p class="mb-1"><strong>Стаж:</strong> {{ app.experience }}</p>{% endif %}
+            {% if app.portfolio_url %}<p class="mb-1"><strong>Портфолио:</strong> <a href="{{ app.portfolio_url }}" target="_blank" rel="noopener">{{ app.portfolio_url }}</a></p>{% endif %}
+            <p class="text-muted small mb-0">{{ app.created_at|date:"d.m.Y H:i" }} · {{ app.get_status_display }}</p>
+          </div>
+          <div class="col-md-4">
+            <form method="post" class="d-grid gap-2">
+              {% csrf_token %}
+              <input type="hidden" name="application_id" value="{{ app.pk }}">
+              <input type="hidden" name="action" value="set_status">
+              <label class="form-label small mb-0">Статус</label>
+              <select name="new_status" class="form-select form-select-sm">
+                {% for val, label in job_status_choices %}
+                  <option value="{{ val }}" {% if app.status == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+              </select>
+              <label class="form-label small mb-0">Заметки</label>
+              <textarea name="admin_notes" class="form-control form-control-sm" rows="2">{{ app.admin_notes }}</textarea>
+              <button type="submit" class="fn-btn fn-btn--hero-primary fn-btn--page-sm fn-admin-tile__btn">Сохранить</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p>Заявок пока нет.</p>
+    {% endfor %}
+  </section>
+</div>
+{% endblock %}

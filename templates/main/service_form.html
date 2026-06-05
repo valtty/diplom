@@ -1,0 +1,58 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    {% if service %}
+        Редактирование услуги
+    {% else %}
+        Добавить новую услугу
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="fn-container fn-inner-page">
+    <section class="fn-section">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="fn-card">
+                    <div class="fn-card__body">
+                        <h1 class="fn-inner-page__title mb-4">
+                            {% if service %}
+                                Редактирование услуги: {{ service.name }}
+                            {% else %}
+                                Добавить новую услугу
+                            {% endif %}
+                        </h1>
+
+                        {% if service and service.image %}
+                            <p class="fn-card__meta mb-2">Текущее изображение</p>
+                            <div class="mb-4">
+                                <img src="{{ service.image.url }}" alt="" class="rounded" style="max-width: 220px; width: 100%; height: auto; border: 1px solid var(--fn-border);">
+                            </div>
+                        {% endif %}
+
+                        <form method="post" enctype="multipart/form-data" class="fn-service-form">
+                            {% csrf_token %}
+                            {% for field in form %}
+                                <div class="mb-3">
+                                    <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                        <div class="form-text">{{ field.help_text }}</div>
+                                    {% endif %}
+                                    {% for err in field.errors %}
+                                        <div class="text-danger small">{{ err }}</div>
+                                    {% endfor %}
+                                </div>
+                            {% endfor %}
+                            <div class="d-flex flex-wrap gap-2 mt-4">
+                                <button type="submit" class="fn-btn fn-btn--hero-primary fn-btn--page-sm">Сохранить</button>
+                                <a href="{% url 'main:services' %}" class="fn-btn fn-btn--hero-outline fn-btn--page-sm">Отмена</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

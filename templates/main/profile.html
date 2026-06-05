@@ -1,0 +1,285 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Личный кабинет{% endblock %}
+
+{% block content %}
+<div class="fn-container">
+    <section class="fn-section">
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="fn-card fn-profile-card">
+                <div class="fn-card__body text-center">
+                    {% if user.avatar %}
+                        <img src="{{ user.avatar.url }}" class="profile-avatar mb-3" alt="{{ user.username }}">
+                    {% else %}
+                        <div class="profile-avatar mb-3" style="background: rgba(0,0,0,0.04); display:flex; align-items:center; justify-content:center; border:1px solid var(--fn-border);">
+                            <i class="fa-regular fa-user" style="font-size:42px; color: rgba(0,0,0,0.35);"></i>
+                        </div>
+                    {% endif %}
+                    <h1 class="fn-title" style="font-size:32px;">{{ user.get_full_name|default:user.username }}</h1>
+                    <p class="text-muted mt-2">
+                        {% if user.role == 'ADMIN' %}
+                            <span class="badge bg-danger">Администратор</span>
+                        {% elif user.role == 'MASTER' %}
+                            <span class="badge bg-success">Мастер</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Клиент</span>
+                        {% endif %}
+                    </p>
+                    <p class="fn-card__meta"><i class="bi bi-telephone"></i> {{ user.phone|default:"Не указан" }}</p>
+                    <p class="fn-card__meta"><i class="bi bi-envelope"></i> {{ user.email }}</p>
+                    <div class="mt-3 d-grid">
+                        <a href="{% url 'users:profile_edit' %}" class="fn-btn fn-btn--hero-primary fn-btn--page-sm">Редактировать профиль</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            {% if not is_master %}
+            <div class="fn-card mb-4">
+                <div class="fn-card__body">
+                    <div class="fn-card__title" style="font-size:22px;">Мои записи</div>
+                    {% if appointments %}
+                        <div class="table-responsive appointments-table-wrap">
+                            <table class="table table-striped table-hover appointments-table">
+                                <thead>
+                                    <tr>
+                                        <th>Дата</th>
+                                        <th>Время</th>
+                                        <th>Услуга</th>
+                                        <th>Мастер</th>
+                                        <th>Статус</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for appointment in appointments %}
+                                    <tr>
+                                        <td>{{ appointment.date|date:"d.m.Y" }}</td>
+                                        <td>{{ appointment.time|time:"H:i" }}</td>
+                                        <td>{{ appointment.service.name }}</td>
+                                        <td>{{ appointment.master.full_name }}</td>
+                                        <td>
+                                            <span class="badge {% if appointment.status == 'confirmed' %}bg-success{% elif appointment.status == 'pending' %}bg-warning{% elif appointment.status == 'cancelled' %}bg-danger{% else %}bg-secondary{% endif %}">
+                                                {% if appointment.status == 'pending' %}<i class="fa-regular fa-clock me-1"></i>{% endif %}
+                                                {% if appointment.status == 'confirmed' %}<i class="fa-solid fa-check me-1"></i>{% endif %}
+                                                {% if appointment.status == 'cancelled' %}<i class="fa-solid fa-xmark me-1"></i>{% endif %}
+                                                {% if appointment.status == 'completed' %}<i class="fa-solid fa-star me-1"></i>{% endif %}
+                                                {{ appointment.get_status_display }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {% if user.role == 'CLIENT' %}
+                                                {% if appointment.status == 'pending' or appointment.status == 'confirmed' %}
+                                                <a href="{% url 'main:appointment_cancel' appointment.id %}" class="fn-appt-action fn-appt-action--danger" onclick="return confirm('Отменить запись?')">Отменить</a>
+                                                {% endif %}
+                                                {% if appointment.status == 'completed' %}
+                                                <a href="{% url 'main:review_create' appointment.id %}" class="fn-appt-action fn-appt-action--accent">Отзыв</a>
+                                                {% endif %}
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-3">У вас пока нет записей.</p>
+                        {% if user.role == 'CLIENT' %}
+                            <a href="{% url 'main:services' %}" class="fn-btn fn-btn--hero-primary fn-btn--page-sm">Выбрать услугу и записаться</a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if is_master %}
+            <div class="fn-card mb-4">
+                <div class="fn-card__body">
+                    <h2 class="fn-master-week__title">График на неделю</h2>
+                    <div class="fn-master-week">
+                        {% for day in master_week_days %}
+                        <div class="fn-master-week__day">
+                            <div class="fn-master-week__day-head">{{ day.date|date:"l, d E" }}</div>
+                            <div class="fn-master-week__day-body">
+                                {% for appointment in day.appointments %}
+                                <div class="fn-master-week__slot">
+                                    <div class="fn-master-week__slot-main">
+                                        <div class="fn-master-week__time">{{ appointment.time|time:"H:i" }}</div>
+                                        <div class="fn-master-week__client">{{ appointment.client.user.get_full_name|default:appointment.client.user.username }}</div>
+                                        <div class="fn-master-week__service">{{ appointment.service.name }}</div>
+                                        {% if appointment.status == 'completed' %}
+                                            <span class="fn-master-week__status fn-master-week__status--done">Выполнено</span>
+                                        {% elif appointment.status == 'confirmed' %}
+                                            <span class="fn-master-week__status fn-master-week__status--confirmed">Подтверждена</span>
+                                        {% elif appointment.status == 'pending' %}
+                                            <span class="fn-master-week__status fn-master-week__status--pending">Ожидает оплаты</span>
+                                        {% endif %}
+                                    </div>
+                                    {% if appointment.status == 'confirmed' %}
+                                    <a href="{% url 'main:appointment_complete' appointment.id %}" class="fn-master-week__complete" title="Отметить выполненной">Готово</a>
+                                    {% endif %}
+                                </div>
+                                {% empty %}
+                                <p class="fn-master-week__empty">Записей нет</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if is_admin %}
+            <div class="fn-card mb-4">
+                <div class="fn-card__body">
+                    <div class="fn-card__title" style="font-size:22px;">Панель администратора</div>
+                    <p class="fn-card__meta mb-3">Разделы сайта и модерация — в одном месте.</p>
+                    <div class="fn-admin-profile-hub">
+                        <a class="fn-admin-profile-hub__link fn-btn fn-btn--hero-outline fn-btn--page-sm" href="{% url 'main:admin_dashboard' %}"><i class="bi bi-speedometer2" aria-hidden="true"></i><span>Панель</span></a>
+                        <a class="fn-admin-profile-hub__link fn-btn fn-btn--hero-outline fn-btn--page-sm" href="{% url 'main:admin_portfolio_moderate' %}"><i class="bi bi-images" aria-hidden="true"></i><span>Портфолио</span></a>
+                        <a class="fn-admin-profile-hub__link fn-btn fn-btn--hero-outline fn-btn--page-sm" href="{% url 'main:admin_job_applications' %}"><i class="bi bi-person-lines-fill" aria-hidden="true"></i><span>Заявки</span></a>
+                        <a class="fn-admin-profile-hub__link fn-btn fn-btn--hero-outline fn-btn--page-sm" href="{% url 'main:schedule_dashboard' %}"><i class="bi bi-calendar-week" aria-hidden="true"></i><span>Расписание</span></a>
+                        <a class="fn-admin-profile-hub__link fn-btn fn-btn--hero-outline fn-btn--page-sm" href="{% url 'main:admin_services' %}"><i class="bi bi-scissors" aria-hidden="true"></i><span>Услуги</span></a>
+                        <a class="fn-admin-profile-hub__link fn-btn fn-btn--hero-outline fn-btn--page-sm" href="{% url 'main:admin_masters' %}"><i class="bi bi-people" aria-hidden="true"></i><span>Мастера</span></a>
+                        <a class="fn-admin-profile-hub__link fn-btn fn-btn--hero-outline fn-btn--page-sm" href="{% url 'main:clients' %}"><i class="bi bi-person-badge" aria-hidden="true"></i><span>Клиенты</span></a>
+                        <a class="fn-admin-profile-hub__link fn-btn fn-btn--hero-outline fn-btn--page-sm" href="{% url 'main:promotion_dashboard' %}"><i class="bi bi-tag" aria-hidden="true"></i><span>Акции</span></a>
+                        <a class="fn-admin-profile-hub__link fn-btn fn-btn--hero-outline fn-btn--page-sm" href="{% url 'main:blog_moderation' %}"><i class="bi bi-journal-text" aria-hidden="true"></i><span>Блог</span></a>
+                        <a class="fn-admin-profile-hub__link fn-btn fn-btn--hero-outline fn-btn--page-sm" href="{% url 'main:author_requests_manage' %}"><i class="bi bi-pen" aria-hidden="true"></i><span>Авторство</span></a>
+                        <a class="fn-admin-profile-hub__link fn-btn fn-btn--hero-outline fn-btn--page-sm" href="{% url 'main:activate_certificate' %}"><i class="bi bi-gift" aria-hidden="true"></i><span>Сертификаты</span></a>
+                        {% if user.is_staff %}
+                        <a class="fn-admin-profile-hub__link fn-btn fn-btn--hero-outline fn-btn--page-sm" href="{% url 'admin:index' %}"><i class="bi bi-gear" aria-hidden="true"></i><span>Django admin</span></a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if user.role == 'CLIENT' %}
+            <div class="fn-card mt-4">
+                <div class="fn-card__body">
+                    <div class="fn-card__title" style="font-size:22px;">Мои бонусы</div>
+                    <p class="fn-card__meta small mb-3">
+                        1 бонус при оплате записи считается как 1&nbsp;₽. При регистрации начисляются приветственные бонусы.
+                        После того как мастер отметит визит выполненным, начисляется процент от стоимости услуги.
+                        За отзыв после визита начисляется 50&nbsp;бонусов. При записи можно списать бонусы не более чем на половину суммы услуги.
+                    </p>
+                    <p class="mb-3 fs-5"><i class="fa-solid fa-coins me-2"></i>Текущий баланс: <strong>{{ client.bonus_balance }} бонусов</strong></p>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Дата</th>
+                                    <th>Тип</th>
+                                    <th>Сумма</th>
+                                    <th>Описание</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for tx in bonus_transactions %}
+                                <tr>
+                                    <td>{{ tx.created_at|date:"d.m.Y H:i" }}</td>
+                                    <td>{{ tx.get_type_display }}</td>
+                                    <td>{{ tx.amount }}</td>
+                                    <td>{{ tx.description }}</td>
+                                </tr>
+                            {% empty %}
+                                <tr><td colspan="4" class="text-muted">История бонусов пока пуста</td></tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="fn-card mt-4">
+                <div class="fn-card__body">
+                    <div class="fn-card__title" style="font-size:22px;">Мои сертификаты</div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Номер</th>
+                                    <th>Номинал</th>
+                                    <th>Статус</th>
+                                    <th>Покупка</th>
+                                    <th>Использование</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cert in certificates %}
+                                <tr>
+                                    <td>{{ cert.certificate_number }}</td>
+                                    <td>{{ cert.amount }} ₽</td>
+                                    <td>{% if cert.is_activated %}<span class="badge bg-secondary">Использован</span>{% else %}<span class="badge bg-success">Активен</span>{% endif %}</td>
+                                    <td>{{ cert.created_at|date:"d.m.Y" }}</td>
+                                    <td>{% if cert.activated_at %}{{ cert.activated_at|date:"d.m.Y H:i" }}{% else %}-{% endif %}</td>
+                                </tr>
+                                {% empty %}
+                                <tr><td colspan="5" class="text-muted">Сертификатов пока нет</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- ДЛЯ МАСТЕРА: Портфолио -->
+            {% if is_master %}
+            <div class="fn-card mt-4">
+                <div class="fn-card__body">
+                    <div class="fn-card__title" style="font-size:22px;">Моё портфолио</div>
+                    <a href="{% url 'main:portfolio_add' %}" class="fn-btn fn-btn--hero-primary fn-btn--page-sm mb-3 d-inline-flex align-items-center gap-1">
+                        <i class="bi bi-plus-circle"></i> Добавить фото
+                    </a>
+                    <div class="row">
+                        {% for image in master.portfolio_images.all %}
+                        <div class="col-md-4 mb-3">
+                            <div class="position-relative">
+                                <img src="{{ image.image.url }}" class="img-fluid rounded" alt="{{ image.description }}" style="height: 150px; object-fit: cover; width: 100%;">
+                                <a href="{% url 'main:portfolio_delete' image.id %}" class="fn-btn fn-btn--hero-outline fn-btn--page-sm position-absolute top-0 end-0 py-1 px-2" style="min-height:auto;" onclick="return confirm('Удалить фото?')" title="Удалить">
+                                    <i class="bi bi-x"></i>
+                                </a>
+                                {% if image.description %}
+                                    <small class="d-block text-muted mt-1">{{ image.description }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-muted">Портфолио пусто</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div class="fn-card mt-4">
+                <div class="fn-card__body">
+                    <div class="fn-card__title" style="font-size:22px;">Отзывы клиентов</div>
+                    <p class="fn-card__meta mb-3">
+                        Рейтинг: <strong>{{ master_avg_rating }}</strong>
+                        {% if master_review_count %}({{ master_review_count }} отзывов){% else %}— отзывов пока нет{% endif %}
+                    </p>
+                    {% for review in master_reviews %}
+                        <div class="fn-card mt-2" style="box-shadow:none;">
+                            <div class="fn-card__body" style="padding:12px 14px;">
+                                <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+                                    <span class="fn-card__meta"><strong>{{ review.client.user.get_full_name|default:review.client.user.username }}</strong></span>
+                                    <span class="fn-card__meta">{{ review.created_at|date:"d.m.Y" }}</span>
+                                </div>
+                                <p class="fn-card__meta mb-1 mt-2">Оценка: <strong>{{ review.rating }}/5</strong></p>
+                                <p class="fn-card__meta mb-0">{{ review.text }}</p>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted mb-0">Пока нет опубликованных отзывов.</p>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    </section>
+</div>
+{% endblock %}

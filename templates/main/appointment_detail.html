@@ -1,0 +1,70 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Детали записи{% endblock %}
+
+{% block content %}
+<div class="fn-container">
+    <section class="fn-section">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="fn-card">
+                <div class="fn-card__body">
+                    <h1 class="fn-title" style="font-size:40px;">Детали записи</h1>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Клиент:</div>
+                        <div class="col-md-8">{{ appointment.client.user.get_full_name }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Мастер:</div>
+                        <div class="col-md-8">{{ appointment.master.full_name }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Услуга:</div>
+                        <div class="col-md-8">{{ appointment.service.name }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Дата:</div>
+                        <div class="col-md-8">{{ appointment.date }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Время:</div>
+                        <div class="col-md-8">{{ appointment.time|time:"H:i" }}</div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Статус:</div>
+                        <div class="col-md-8">
+                            <span class="badge {% if appointment.status == 'confirmed' %}bg-success{% elif appointment.status == 'pending' %}bg-warning{% elif appointment.status == 'cancelled' %}bg-danger{% else %}bg-secondary{% endif %} fs-6">
+                                {{ appointment.get_status_display }}
+                            </span>
+                        </div>
+                    </div>
+                    {% if appointment.comment %}
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Комментарий:</div>
+                        <div class="col-md-8">{{ appointment.comment }}</div>
+                    </div>
+                    {% endif %}
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between flex-wrap gap-2">
+                        <a href="{% url 'users:profile' %}" class="fn-btn fn-btn--hero-outline fn-btn--page-sm d-inline-flex align-items-center gap-1">
+                            <i class="bi bi-arrow-left"></i> Назад
+                        </a>
+                        
+                        {% if user.role == 'ADMIN' or user.is_superuser %}
+                            <div>
+                                <a href="/admin/main/appointment/{{ appointment.id }}/change/" class="fn-btn fn-btn--hero-primary fn-btn--page-sm d-inline-flex align-items-center gap-1" target="_blank">
+                                    <i class="bi bi-pencil"></i> Изменить в админке
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>
+</div>
+{% endblock %}

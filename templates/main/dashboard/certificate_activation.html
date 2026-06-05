@@ -1,0 +1,29 @@
+{% extends 'main/base.html' %}
+{% block title %}Активация сертификатов{% endblock %}
+{% block content %}
+<div class="fn-container">
+    <section class="fn-section">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="fn-card">
+                <div class="fn-card__body">
+                <h1 class="fn-title" style="font-size:40px;">Активация сертификата</h1>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Номер сертификата</label>
+                        <input type="text" name="certificate_number" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">ID записи (опционально)</label>
+                        <input type="number" name="appointment_id" class="form-control">
+                    </div>
+                    <button type="submit" class="fn-btn fn-btn--hero-primary fn-btn--page-sm">Активировать</button>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>
+</div>
+{% endblock %}

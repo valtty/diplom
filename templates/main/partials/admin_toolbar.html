@@ -1,0 +1,21 @@
+{% if user.is_authenticated %}
+  {% if user.role == 'ADMIN' or user.is_superuser %}
+<aside class="fn-admin-toolbar" aria-label="Быстрые ссылки администратора">
+  <div class="fn-admin-toolbar__inner">
+    <span class="fn-admin-toolbar__label">Админ:</span>
+    <a href="{% url 'main:admin_dashboard' %}">Панель</a>
+    <a href="{% url 'main:admin_portfolio_moderate' %}">Портфолио</a>
+    <a href="{% url 'main:admin_job_applications' %}">Заявки</a>
+    <a href="{% url 'main:schedule_dashboard' %}">Расписание</a>
+    <a href="{% url 'main:admin_services' %}">Услуги</a>
+    <a href="{% url 'main:admin_masters' %}">Мастера</a>
+    <a href="{% url 'main:clients' %}">Клиенты</a>
+    <a href="{% url 'main:promotion_dashboard' %}">Акции</a>
+    <a href="{% url 'main:blog_moderation' %}">Блог</a>
+    {% if user.is_staff %}
+      <a href="{% url 'admin:index' %}">Django admin</a>
+    {% endif %}
+  </div>
+</aside>
+  {% endif %}
+{% endif %}

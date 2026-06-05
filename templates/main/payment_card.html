@@ -1,0 +1,71 @@
+{% extends 'main/base.html' %}
+{% block title %}Оплата{% endblock %}
+{% block content %}
+<div class="fn-container">
+    <section class="fn-section">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="fn-card">
+                <div class="fn-card__body">
+                <h1 class="fn-title" style="font-size:40px;">Оплата картой</h1>
+                <p class="text-muted">К оплате: <strong>{{ transaction.prepaid_amount|default:transaction.amount }} ₽</strong></p>
+                <form method="post" id="paymentCardForm" novalidate>
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label" for="id_card_number">Номер карты</label>
+                        <input class="form-control" name="card_number" id="id_card_number" autocomplete="cc-number" inputmode="numeric" maxlength="23" placeholder="0000 0000 0000 0000" required>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="form-label" for="id_expiry">Срок действия</label>
+                            <input class="form-control" name="expiry" id="id_expiry" autocomplete="cc-exp" inputmode="numeric" maxlength="5" placeholder="MM/YY" required>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label" for="id_cvv">CVV</label>
+                            <input class="form-control" name="cvv" id="id_cvv" autocomplete="cc-csc" inputmode="numeric" maxlength="4" placeholder="***" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="id_cardholder">Имя держателя</label>
+                        <input class="form-control" name="cardholder" id="id_cardholder" autocomplete="cc-name" maxlength="80" placeholder="IVAN IVANOV" required>
+                    </div>
+                    <button type="submit" class="fn-btn fn-btn--hero-primary fn-btn--page-sm w-100">Оплатить</button>
+                </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>
+</div>
+<script>
+(function () {
+  const form = document.getElementById("paymentCardForm");
+  if (!form) return;
+  const pan = document.getElementById("id_card_number");
+  const exp = document.getElementById("id_expiry");
+  const cvv = document.getElementById("id_cvv");
+  const holder = document.getElementById("id_cardholder");
+  function digits(s) { return (s || "").replace(/\D/g, ""); }
+  pan.addEventListener("input", function () {
+    let d = digits(pan.value).slice(0, 19);
+    let out = [];
+    for (let i = 0; i < d.length; i += 4) out.push(d.slice(i, i + 4));
+    pan.value = out.join(" ");
+  });
+  exp.addEventListener("input", function () {
+    let d = digits(exp.value).slice(0, 4);
+    if (d.length >= 2) exp.value = d.slice(0, 2) + "/" + d.slice(2);
+    else exp.value = d;
+  });
+  cvv.addEventListener("input", function () { cvv.value = digits(cvv.value).slice(0, 4); });
+  form.addEventListener("submit", function (e) {
+    const n = digits(pan.value);
+    if (n.length < 16 || n.length > 19) { e.preventDefault(); alert("Введите от 16 до 19 цифр номера карты."); return; }
+    if (!/^\d{2}\/\d{2}$/.test((exp.value || "").trim())) { e.preventDefault(); alert("Срок: формат MM/YY."); return; }
+    const c = digits(cvv.value);
+    if (c.length < 3) { e.preventDefault(); alert("CVV: 3 или 4 цифры."); return; }
+    if ((holder.value || "").trim().length < 2) { e.preventDefault(); alert("Укажите имя держателя."); return; }
+  });
+})();
+</script>
+{% endblock %}

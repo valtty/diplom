@@ -1,0 +1,19 @@
+{% extends 'main/base.html' %}
+{% block title %}Заявка на авторство{% endblock %}
+{% block content %}
+<div class="fn-container">
+    <section class="fn-section">
+    <div class="fn-card">
+        <div class="fn-card__body">
+        <h1 class="fn-title" style="font-size:40px;">Заявка на авторство</h1>
+        <p class="text-muted">Опишите, почему вы хотите вести блог салона.</p>
+        <form method="post">
+            {% csrf_token %}
+            <textarea class="form-control mb-3" name="message" rows="5" placeholder="Ваше сообщение"></textarea>
+            <button type="submit" class="fn-btn fn-btn--hero-primary fn-btn--page-sm">Отправить заявку</button>
+        </form>
+        </div>
+    </div>
+    </section>
+</div>
+{% endblock %}

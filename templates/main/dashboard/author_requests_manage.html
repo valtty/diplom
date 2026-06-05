@@ -1,0 +1,23 @@
+{% extends 'main/base.html' %}
+{% block title %}Заявки на авторство{% endblock %}
+{% block content %}
+<div class="fn-container">
+    <section class="fn-section">
+    <h1 class="fn-title" style="font-size:40px;">Заявки на авторство</h1>
+    <div class="fn-card mt-4">
+        <div class="fn-card__body">
+        {% for req in requests %}
+            <div class="border-bottom py-3">
+                <h6>{{ req.master.full_name }}</h6>
+                <p class="text-muted">{{ req.message|default:"Без комментария" }}</p>
+                <a href="{% url 'main:author_request_action' req.id 'approve' %}" class="fn-btn fn-btn--hero-primary fn-btn--page-sm">Одобрить</a>
+                <a href="{% url 'main:author_request_action' req.id 'reject' %}" class="fn-btn fn-btn--hero-outline fn-btn--page-sm">Отклонить</a>
+            </div>
+        {% empty %}
+            <p class="text-muted">Новых заявок нет.</p>
+        {% endfor %}
+        </div>
+    </div>
+    </section>
+</div>
+{% endblock %}

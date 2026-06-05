@@ -1,0 +1,41 @@
+{% extends 'main/base.html' %}
+{% block title %}Панель администратора — Fleur Nails{% endblock %}
+{% block content %}
+<div class="fn-container fn-inner-page">
+  <section class="fn-section">
+    <h1 class="fn-inner-page__title">Управление сайтом</h1>
+    <p class="fn-inner-page__lead">Редактирование с публичных страниц: услуги, мастера, клиенты, записи, акции, расписание, блог и портфолио.</p>
+
+    <div class="row g-3 mb-4">
+      <div class="col-md-6 col-lg-4">
+        <div class="fn-admin-tile">
+          <span class="fn-admin-tile__badge">{{ pending_portfolio }}</span>
+          <h2 class="fn-admin-tile__title">Портфолио на модерации</h2>
+          <p class="fn-admin-tile__text">Одобрение работ и отметка «на главной» (до 7).</p>
+          <a class="fn-btn fn-btn--hero-primary fn-btn--page-sm fn-admin-tile__btn" href="{% url 'main:admin_portfolio_moderate' %}">Открыть</a>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-4">
+        <div class="fn-admin-tile">
+          <span class="fn-admin-tile__badge">{{ new_job_apps }}</span>
+          <h2 class="fn-admin-tile__title">Заявки мастеров</h2>
+          <p class="fn-admin-tile__text">Заявки с формы на главной странице.</p>
+          <a class="fn-btn fn-btn--hero-primary fn-btn--page-sm fn-admin-tile__btn" href="{% url 'main:admin_job_applications' %}">Открыть</a>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="fn-inner-page__subtitle">Разделы</h2>
+    <ul class="fn-admin-links">
+      <li><a href="{% url 'main:admin_services' %}">Услуги — список, добавление, правка</a></li>
+      <li><a href="{% url 'main:admin_masters' %}">Мастера</a></li>
+      <li><a href="{% url 'main:clients' %}">Клиенты</a></li>
+      <li><a href="{% url 'main:promotion_dashboard' %}">Акции</a></li>
+      <li><a href="{% url 'main:schedule_dashboard' %}">Расписание мастеров</a></li>
+      <li><a href="{% url 'main:blog_moderation' %}">Модерация блога</a></li>
+      <li><a href="{% url 'main:author_requests_manage' %}">Заявки на авторство</a></li>
+      <li><a href="{% url 'main:portfolio' %}">Портфолио (публичная страница)</a></li>
+    </ul>
+  </section>
+</div>
+{% endblock %}

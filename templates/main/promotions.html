@@ -1,0 +1,41 @@
+{% extends 'main/base.html' %}
+{% block title %}Акции | Fleur Nails{% endblock %}
+{% block content %}
+<div class="fn-container fn-inner-page">
+    <section class="fn-section">
+    <h1 class="fn-inner-page__title mb-4">Акции и скидки</h1>
+    <div class="fn-home-cards fn-home-cards--services">
+        {% for promo in promotions %}
+            <article class="fn-home-service-card fn-home-service-card--fixed">
+                <div class="fn-home-service-card__media">
+                    {% if promo.image %}
+                        <img class="fn-home-service-card__img" src="{{ promo.image.url }}" alt="{{ promo.title }}" loading="lazy" width="400" height="240">
+                    {% else %}
+                        <div class="fn-home-service-card__img fn-home-service-card__img--placeholder" role="img" aria-label="Акция">Акция</div>
+                    {% endif %}
+                </div>
+                <div class="fn-home-service-card__body">
+                    <h2 class="fn-home-service-card__title">{{ promo.title }}</h2>
+                    <p class="fn-home-service-card__desc fn-home-card-desc-clamp">{{ promo.description|striptags }}</p>
+                    <p class="fn-home-service-card__duration">
+                        <span class="fn-home-service-card__clock" aria-hidden="true"><i class="bi bi-tag"></i></span>
+                        Скидка {{ promo.discount_percent }}%
+                    </p>
+                    <p class="fn-home-service-card__meta fn-promo-card__timer">
+                        До конца: <span data-countdown="{{ promo.end_date|date:'c' }}"></span>
+                    </p>
+                    <p class="fn-home-service-card__meta small mb-2">Действует до {{ promo.end_date|date:"d.m.Y" }}</p>
+                    <div class="fn-home-card-actions d-grid gap-2">
+                        <a href="{% url 'main:appointment_create' %}" class="fn-btn fn-btn--hero-primary fn-btn--card">Записаться</a>
+                    </div>
+                </div>
+            </article>
+        {% empty %}
+            <div class="fn-card fn-catalog-empty">
+                <div class="fn-card__body">Сейчас активных акций нет.</div>
+            </div>
+        {% endfor %}
+    </div>
+    </section>
+</div>
+{% endblock %}

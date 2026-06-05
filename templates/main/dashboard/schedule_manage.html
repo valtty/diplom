@@ -1,0 +1,60 @@
+{% extends 'main/base.html' %}
+{% block title %}Расписание мастеров{% endblock %}
+{% block content %}
+<div class="fn-container">
+    <section class="fn-section">
+    <h1 class="fn-title" style="font-size:40px;">Расписание мастеров</h1>
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="fn-card">
+                <div class="fn-card__body">
+                <div class="fn-card__title" style="font-size:22px;">Массовое назначение дат</div>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ bulk_form.as_p }}
+                    <button type="submit" class="fn-btn fn-btn--hero-primary fn-btn--page-sm">Сохранить</button>
+                </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="fn-card">
+                <div class="fn-card__body">
+                <form method="get" class="row g-2 mb-3">
+                    <div class="col-md-8">
+                        <select name="master" class="form-control">
+                            <option value="">Все мастера</option>
+                            {% for m in masters %}
+                                <option value="{{ m.pk }}" {% if request.GET.master == m.pk|stringformat:"s" %}selected{% endif %}>{{ m.full_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-4"><button type="submit" class="fn-btn fn-btn--hero-outline fn-btn--page-sm w-100">Фильтр</button></div>
+                </form>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr><th>Мастер</th><th>Дата</th><th>Время</th><th>Перерыв</th><th>Выходной</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for s in schedules %}
+                                <tr>
+                                    <td>{{ s.master.full_name }}</td>
+                                    <td>{{ s.work_date|date:"d.m.Y" }}</td>
+                                    <td>{{ s.start_time|time:"H:i" }} - {{ s.end_time|time:"H:i" }}</td>
+                                    <td>{% if s.break_start %}{{ s.break_start|time:"H:i" }} - {{ s.break_end|time:"H:i" }}{% else %}-{% endif %}</td>
+                                    <td>{% if s.is_day_off %}Да{% else %}Нет{% endif %}</td>
+                                </tr>
+                            {% empty %}
+                                <tr><td colspan="5" class="text-muted">Расписание пока не добавлено.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</div>
+{% endblock %}

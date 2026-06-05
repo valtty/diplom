@@ -1,0 +1,92 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Наши мастера - Fleur Nails{% endblock %}
+
+{% block content %}
+<div class="fn-container fn-inner-page">
+    <section class="fn-section">
+    <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-3">
+        <h1 class="fn-inner-page__title mb-0">Наши мастера</h1>
+
+        {% if user.is_authenticated %}
+        {% if user.role == 'ADMIN' or user.is_superuser %}
+            <a href="{% url 'main:master_add' %}" class="fn-btn fn-btn--hero-primary fn-btn--page-sm fn-page-header-action">Добавить мастера</a>
+        {% endif %}
+        {% endif %}
+    </div>
+
+    <form method="get" class="fn-masters-filters mb-4" aria-label="Фильтр мастеров по направлению">
+        <div class="fn-masters-filters__field">
+            <label class="form-label" for="id_specialization">Направление</label>
+            <select name="specialization" id="id_specialization" class="form-select" onchange="this.form.submit()">
+                <option value="">Все направления</option>
+                {% for value, label in specialization_choices %}
+                    <option value="{{ value }}" {% if active_specialization == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        {% if active_specialization %}
+        <div class="fn-masters-filters__actions">
+            <a href="{% url 'main:masters' %}" class="fn-btn fn-btn--hero-outline fn-btn--page-sm w-100">Сбросить фильтр</a>
+        </div>
+        {% endif %}
+    </form>
+
+    <div class="fn-home-cards fn-home-cards--masters">
+        {% for master in masters %}
+            <article class="fn-home-master-card fn-home-master-card--fixed">
+                <div class="fn-home-master-card__photo-wrap">
+                    {% if master.photo %}
+                        <img class="fn-home-master-card__photo" src="{{ master.photo.url }}" alt="{{ master.full_name }}" loading="lazy" width="333" height="288">
+                    {% else %}
+                        <div class="fn-home-master-card__photo fn-home-master-card__photo--placeholder" role="img" aria-label="Нет фото">Фото мастера</div>
+                    {% endif %}
+                </div>
+                <div class="fn-home-master-card__body">
+                    <h2 class="fn-home-master-card__name">{{ master.full_name }}</h2>
+                    <p class="fn-home-master-card__meta">
+                        <span class="fn-master-specialization">{{ master.get_specialization_display }}</span>
+                        · Стаж: {{ master.experience }} лет{% if master.reviews_count %} · Рейтинг: <strong>{{ master.avg_rating|floatformat:1 }}</strong> ({{ master.reviews_count }} отзывов){% else %} · Отзывов пока нет{% endif %}
+                    </p>
+                    <p class="fn-home-card-desc-clamp">{{ master.bio|striptags|default:"Профессиональный мастер студии Fleur Nails." }}</p>
+                    <div class="fn-home-card-actions d-grid gap-2">
+                        <a href="{% url 'main:master_detail' master.pk %}" class="fn-btn fn-btn--hero-outline fn-btn--card">Подробнее</a>
+                        <a href="{% url 'main:appointment_create' %}?master={{ master.pk }}" class="fn-btn fn-btn--hero-primary fn-btn--card">Записаться</a>
+                    </div>
+
+                    {% if user.is_authenticated %}
+                    {% if user.role == 'ADMIN' or user.is_superuser %}
+                        <div class="d-grid gap-2 mt-2">
+                            <a href="{% url 'main:master_edit' master.pk %}" class="fn-btn fn-btn--hero-outline fn-btn--card">Редактировать</a>
+                            <a href="{% url 'main:master_delete' master.pk %}" class="fn-btn fn-btn--hero-outline fn-btn--card text-danger border-danger" onclick="return confirm('Вы уверены, что хотите удалить мастера?');">Удалить</a>
+                        </div>
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </article>
+        {% empty %}
+        <div class="fn-card fn-catalog-empty">
+            <div class="fn-card__body">
+                {% if active_specialization %}
+                    <p class="mb-0">Мастеров с выбранным направлением не найдено.</p>
+                    <div class="mt-3">
+                        <a href="{% url 'main:masters' %}" class="fn-btn fn-btn--hero-outline fn-btn--page-sm">Показать всех мастеров</a>
+                    </div>
+                {% else %}
+                    <p class="mb-0">Скоро здесь появятся мастера.</p>
+                {% endif %}
+            {% if user.is_authenticated %}
+            {% if user.role == 'ADMIN' or user.is_superuser %}
+                <div class="mt-3">
+                    <a href="{% url 'main:master_add' %}" class="fn-btn fn-btn--hero-primary fn-btn--page-sm">Добавить первого мастера</a>
+                </div>
+            {% endif %}
+            {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    </section>
+</div>
+{% endblock %}

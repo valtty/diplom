@@ -1,0 +1,46 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Услуги - Fleur Nails{% endblock %}
+
+{% block content %}
+<div class="fn-container fn-inner-page">
+    <section class="fn-section">
+    <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-3">
+        <h1 class="fn-inner-page__title mb-0">Наши услуги</h1>
+
+        {% if user.is_authenticated %}
+        {% if user.role == 'ADMIN' or user.is_superuser %}
+            <a href="{% url 'main:service_add' %}" class="fn-btn fn-btn--hero-primary fn-btn--page-sm fn-page-header-action">Добавить услугу</a>
+        {% endif %}
+        {% endif %}
+    </div>
+
+    {% if service_groups %}
+        {% for group in service_groups %}
+        <section class="fn-services-category{% if not forloop.first %} fn-services-category--spaced{% endif %}" aria-labelledby="category-{{ forloop.counter }}">
+            <h2 class="fn-services-category__title" id="category-{{ forloop.counter }}">{{ group.title }}</h2>
+            <div class="fn-home-cards fn-home-cards--services">
+                {% for service in group.services %}
+                    {% include 'main/partials/service_card.html' with service=service %}
+                {% endfor %}
+            </div>
+        </section>
+        {% endfor %}
+    {% else %}
+        <div class="fn-card">
+            <div class="fn-card__body" style="color: var(--fn-muted);">
+                Скоро здесь появятся услуги
+            {% if user.is_authenticated %}
+            {% if user.role == 'ADMIN' or user.is_superuser %}
+                <div class="mt-3">
+                    <a href="{% url 'main:service_add' %}" class="fn-btn fn-btn--hero-primary fn-btn--page-sm">Добавить первую услугу</a>
+                </div>
+            {% endif %}
+            {% endif %}
+            </div>
+        </div>
+    {% endif %}
+    </section>
+</div>
+{% endblock %}

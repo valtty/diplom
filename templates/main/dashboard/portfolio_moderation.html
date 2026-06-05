@@ -1,0 +1,71 @@
+{% extends 'main/base.html' %}
+{% block title %}Модерация портфолио — Fleur Nails{% endblock %}
+{% block content %}
+<div class="fn-container fn-inner-page">
+  <section class="fn-section">
+    <p class="mb-3"><a href="{% url 'main:admin_dashboard' %}">← К панели управления</a></p>
+    <h1 class="fn-inner-page__title">Модерация портфолио</h1>
+    <p class="fn-inner-page__lead">Одобрённые работы попадают на страницу «Портфолио». На главной — только отмеченные (не больше 7).</p>
+
+    <h2 class="fn-inner-page__subtitle mt-4">Ожидают одобрения</h2>
+    <div class="row g-3">
+      {% for img in pending_images %}
+        <div class="col-md-4 col-lg-3">
+          <div class="fn-admin-card">
+            <img src="{{ img.image.url }}" alt="" class="w-100 rounded mb-2" style="max-height:200px;object-fit:cover;">
+            <p class="small mb-2">{{ img.master.full_name }}</p>
+            <div class="d-flex flex-wrap gap-1">
+              <form method="post">{% csrf_token %}
+                <input type="hidden" name="image_id" value="{{ img.pk }}">
+                <input type="hidden" name="action" value="approve">
+                <button type="submit" class="fn-btn fn-btn--hero-primary fn-btn--page-sm">Одобрить</button>
+              </form>
+              <form method="post">{% csrf_token %}
+                <input type="hidden" name="image_id" value="{{ img.pk }}">
+                <input type="hidden" name="action" value="delete">
+                <button type="submit" class="fn-btn fn-btn--hero-outline fn-btn--page-sm" onclick="return confirm('Удалить фото?');">Удалить</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p>Нет работ на модерации.</p>
+      {% endfor %}
+    </div>
+
+    <h2 class="fn-inner-page__subtitle mt-5">Одобренные</h2>
+    <div class="row g-3">
+      {% for img in approved_images %}
+        <div class="col-md-4 col-lg-3">
+          <div class="fn-admin-card">
+            <img src="{{ img.image.url }}" alt="" class="w-100 rounded mb-2" style="max-height:200px;object-fit:cover;">
+            <p class="small mb-1">{{ img.master.full_name }}</p>
+            <p class="small mb-2">
+              {% if img.show_on_homepage %}<span class="badge text-bg-primary">На главной</span>{% else %}<span class="text-muted">Только портфолио</span>{% endif %}
+            </p>
+            <div class="d-flex flex-wrap gap-1">
+              <form method="post">{% csrf_token %}
+                <input type="hidden" name="image_id" value="{{ img.pk }}">
+                <input type="hidden" name="action" value="toggle_home">
+                <button type="submit" class="fn-btn fn-btn--hero-outline fn-btn--page-sm">{% if img.show_on_homepage %}Снять с главной{% else %}На главную{% endif %}</button>
+              </form>
+              <form method="post">{% csrf_token %}
+                <input type="hidden" name="image_id" value="{{ img.pk }}">
+                <input type="hidden" name="action" value="reject">
+                <button type="submit" class="fn-btn fn-btn--hero-outline fn-btn--page-sm">Скрыть</button>
+              </form>
+              <form method="post">{% csrf_token %}
+                <input type="hidden" name="image_id" value="{{ img.pk }}">
+                <input type="hidden" name="action" value="delete">
+                <button type="submit" class="fn-btn fn-btn--hero-outline fn-btn--page-sm" onclick="return confirm('Удалить?');">Удалить</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      {% empty %}
+        <p>Нет одобренных работ.</p>
+      {% endfor %}
+    </div>
+  </section>
+</div>
+{% endblock %}

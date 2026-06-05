@@ -1,0 +1,39 @@
+{% extends 'main/base.html' %}
+{% block title %}Блог | Fleur Nails{% endblock %}
+{% block content %}
+<div class="fn-container fn-inner-page">
+    <section class="fn-section">
+    <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-3">
+        <h1 class="fn-inner-page__title">Блог Fleur Nails</h1>
+        {% if user.is_authenticated and user.role == 'MASTER' %}
+            <a class="fn-btn fn-btn--hero-primary fn-btn--page-sm" href="{% url 'main:blog_create' %}">Написать статью</a>
+        {% endif %}
+    </div>
+    <div class="fn-grid-3 fn-blog-grid">
+        {% for post in posts %}
+            <a class="fn-card fn-blog-card-link" href="{% url 'main:blog_detail' post.slug %}">
+                <div class="fn-blog-card__media">
+                {% if post.image %}
+                    <img class="fn-blog-card__img" src="{{ post.image.url }}" alt="{{ post.title }}">
+                {% else %}
+                    <div class="fn-blog-card__img fn-blog-card__img--placeholder" role="img" aria-label="Статья">
+                        Статья
+                    </div>
+                {% endif %}
+                </div>
+                <div class="fn-card__body">
+                    <div class="fn-card__title">{{ post.title }}</div>
+                    <div class="fn-card__meta">{{ post.get_category_display }} · {{ post.created_at|date:'d.m.Y' }}</div>
+                    <p class="fn-card__meta mt-2 fn-home-card-desc-clamp">{{ post.excerpt|default:post.content|striptags|truncatechars:180 }}</p>
+                    <div class="mt-3 d-grid">
+                        <span class="fn-btn fn-btn--hero-primary fn-btn--card">Читать</span>
+                    </div>
+                </div>
+            </a>
+        {% empty %}
+            <div class="fn-card"><div class="fn-card__body" style="color: var(--fn-muted);">Статей пока нет.</div></div>
+        {% endfor %}
+    </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="main-content">
+    <h1 class="page-title">Клиенты</h1>
+
+    <div class="titles">
+        <a href="{% url 'main:client_add' %}" class="fn-btn fn-btn--hero-primary fn-btn--page-sm">Добавить клиента</a>
+    </div>
+
+    <div class="table">
+        <table class="subjects-table">
+            <thead>
+                <tr>
+                    <th>Имя</th>
+                    <th>Фамилия</th>
+                    <th>Телефон</th>
+                    <th>Email</th>
+                    <th>Дата регистрации</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for client in clients %}
+                <tr>
+                    <td>
+                        <a href="{% url 'main:client_detail' client.pk %}">{{ client.user.first_name }}</a>
+                    </td>
+                    <td>{{ client.user.last_name }}</td>
+                    <td>{{ client.user.phone }}</td>
+                    <td>{{ client.user.email }}</td>
+                    <td>{{ client.created_at|date:"d.m.Y" }}</td>
+                    <td><a href="{% url 'main:client_edit' client.pk %}" class="fn-btn fn-btn--hero-primary fn-btn--page-sm">Изменить</a></td>
+                    <td><a href="{% url 'main:client_delete' client.pk %}" class="fn-btn fn-btn--hero-outline fn-btn--page-sm">Удалить</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

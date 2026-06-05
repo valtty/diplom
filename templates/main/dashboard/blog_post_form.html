@@ -1,0 +1,18 @@
+{% extends 'main/base.html' %}
+{% block title %}Новая статья{% endblock %}
+{% block content %}
+<div class="fn-container">
+    <section class="fn-section">
+    <div class="fn-card">
+        <div class="fn-card__body">
+        <h1 class="fn-title" style="font-size:40px;">Новая статья</h1>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="fn-btn fn-btn--hero-primary fn-btn--page-sm">Отправить на модерацию</button>
+        </form>
+        </div>
+    </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Добавить фото в портфолио{% endblock %}
+
+{% block content %}
+<div class="fn-container">
+    <section class="fn-section">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="fn-card">
+                <div class="fn-card__body">
+                    <h1 class="fn-title" style="font-size:40px;">Добавить фото в портфолио</h1>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">{{ form.image.label_tag }}{{ form.image }}</div>
+                        <div class="mb-3">{{ form.design_type.label_tag }}{{ form.design_type }}</div>
+                        <div class="mb-3">{{ form.color_scheme.label_tag }}{{ form.color_scheme }}</div>
+                        <div class="mb-3">{{ form.description.label_tag }}{{ form.description }}</div>
+                        <div class="mb-3">{{ form.video_url.label_tag }}{{ form.video_url }}</div>
+                        
+                        <div class="d-grid d-md-flex gap-2 flex-wrap">
+                            <button type="submit" class="fn-btn fn-btn--hero-primary fn-btn--page-sm">Загрузить</button>
+                            <a href="{% url 'users:profile' %}" class="fn-btn fn-btn--hero-outline fn-btn--page-sm">Отмена</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>
+</div>
+{% endblock %}

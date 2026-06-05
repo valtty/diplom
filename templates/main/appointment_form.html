@@ -1,0 +1,162 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Запись на процедуру{% endblock %}
+
+{% block content %}
+<div class="fn-container">
+    <section class="fn-section">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="fn-card">
+                <div class="fn-card__body">
+                    <h1 class="fn-title mb-3" style="font-size:40px;">Онлайн-запись</h1>
+                    <form method="post">
+                        {% csrf_token %}
+
+                        {% if client %}
+                            <div class="fn-card" style="box-shadow:none; border-radius: var(--fn-radius-sm);">
+                                <div class="fn-card__body" style="padding:12px 14px;">
+                                    Ваш бонусный баланс: <strong>{{ client.bonus_balance }}</strong>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="mb-3">
+                            <label for="{{ form.master.id_for_label }}" class="form-label">Мастер</label>
+                            <select name="master" class="form-control" id="{{ form.master.id_for_label }}" required>
+                                <option value="">--------- Выберите мастера ---------</option>
+                                {% for master in form.master.field.queryset %}
+                                    <option value="{{ master.pk }}" {% if form.master.value|stringformat:"s" == master.pk|stringformat:"s" %}selected{% endif %}>
+                                        {{ master.full_name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            {% if form.master.errors %}
+                                <div class="text-danger">{{ form.master.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3 mt-3">
+                            <label for="{{ form.service.id_for_label }}" class="form-label">Услуга</label>
+                            <select name="service" class="form-control" id="{{ form.service.id_for_label }}" required>
+                                <option value="">--------- Выберите услугу ---------</option>
+                                {% for service in form.service.field.queryset %}
+                                    <option value="{{ service.pk }}" {% if form.service.value|stringformat:"s" == service.pk|stringformat:"s" %}selected{% endif %}>
+                                        {{ service.name }} - {{ service.price }} ₽ ({{ service.duration_minutes }} мин)
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            {% if form.service.errors %}
+                                <div class="text-danger">{{ form.service.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.date.id_for_label }}" class="form-label">Дата</label>
+                                <input type="date" name="date" class="form-control" id="{{ form.date.id_for_label }}" value="{{ form.date.value|date:'Y-m-d' }}" min="{{ form.date.field.widget.attrs.min }}" required>
+                                {% if form.date.errors %}
+                                    <div class="text-danger">{{ form.date.errors }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.time.id_for_label }}" class="form-label">Время начала</label>
+                                <select name="time" class="form-control" id="{{ form.time.id_for_label }}" required>
+                                    {% if form.time.value %}
+                                    <option value="{{ form.time.value|time:'H:i' }}">{{ form.time.value|time:'H:i' }}</option>
+                                    {% else %}
+                                    <option value="">Сначала выберите мастера и дату</option>
+                                    {% endif %}
+                                </select>
+                                {% if form.time.errors %}
+                                    <div class="text-danger">{{ form.time.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3 mt-3">
+                            <label for="{{ form.payment_option.id_for_label }}" class="form-label">Способ оплаты</label>
+                            {{ form.payment_option }}
+                        </div>
+                        <div class="mb-3" id="certificateNumberGroup">
+                            <label for="{{ form.certificate_number.id_for_label }}" class="form-label">Номер сертификата</label>
+                            {{ form.certificate_number }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.design_preference.id_for_label }}" class="form-label">Ссылка на желаемый дизайн</label>
+                            {{ form.design_preference }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.promo_code_applied.id_for_label }}" class="form-label">Акция / промокод</label>
+                            {{ form.promo_code_applied }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.bonus_used.id_for_label }}" class="form-label">Списать бонусы</label>
+                            {{ form.bonus_used }}
+                            <div class="form-text">Можно оплатить бонусами до 50% стоимости.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="{{ form.comment.id_for_label }}" class="form-label">Комментарий</label>
+                            <textarea name="comment" class="form-control" id="{{ form.comment.id_for_label }}" rows="3">{{ form.comment.value|default:'' }}</textarea>
+                            {% if form.comment.errors %}
+                                <div class="text-danger">{{ form.comment.errors }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mt-3 fn-form-actions-full">
+                            <button type="submit" class="fn-btn fn-btn--hero-primary fn-btn--page-sm w-100">Подтвердить запись</button>
+                            <a href="{% url 'main:index' %}" class="fn-btn fn-btn--hero-outline fn-btn--page-sm w-100">Отмена</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const masterInput = document.getElementById("id_master");
+    const dateInput = document.getElementById("id_date");
+    const timeInput = document.getElementById("id_time");
+    const serviceInput = document.getElementById("id_service");
+    const paymentInput = document.getElementById("id_payment_option");
+    const certificateGroup = document.getElementById("certificateNumberGroup");
+    const certificateInput = document.getElementById("id_certificate_number");
+
+    const toggleCertificate = () => {
+        const isCert = paymentInput && paymentInput.value === "certificate";
+        if (!certificateGroup) return;
+        certificateGroup.style.display = isCert ? "" : "none";
+        if (!isCert && certificateInput) certificateInput.value = "";
+    };
+
+    const loadSlots = async () => {
+        if (!masterInput.value || !dateInput.value) return;
+        const serviceParam = serviceInput && serviceInput.value ? `&service=${serviceInput.value}` : "";
+        const res = await fetch(`/api/available-slots/?master=${masterInput.value}&date=${dateInput.value}${serviceParam}`);
+        const data = await res.json();
+        timeInput.innerHTML = "";
+        if (!data.slots.length) {
+            const opt = document.createElement("option");
+            opt.value = "";
+            opt.textContent = "Свободных слотов нет";
+            timeInput.appendChild(opt);
+            return;
+        }
+        data.slots.forEach((slot) => {
+            const opt = document.createElement("option");
+            opt.value = slot;
+            opt.textContent = slot;
+            timeInput.appendChild(opt);
+        });
+    };
+    masterInput.addEventListener("change", loadSlots);
+    dateInput.addEventListener("change", loadSlots);
+    if (serviceInput) serviceInput.addEventListener("change", loadSlots);
+    if (paymentInput) paymentInput.addEventListener("change", toggleCertificate);
+    toggleCertificate();
+});
+</script>
+{% endblock %}

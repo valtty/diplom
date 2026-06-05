@@ -1,0 +1,73 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}{{ service.name }}{% endblock %}
+
+{% block content %}
+<div class="fn-container fn-inner-page">
+    <section class="fn-section">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="fn-card">
+                {% if service.image %}
+                <div class="fn-home-service-card__media">
+                    <img src="{{ service.image.url }}" class="fn-home-service-card__img" alt="{{ service.name }}" loading="lazy" width="800" height="420" style="max-height: 420px; height: auto;">
+                </div>
+                {% endif %}
+                <div class="fn-card__body">
+                    <h1 class="fn-title" style="font-size:40px;">{{ service.name }}</h1>
+                    <p class="fn-card__meta mt-3">{{ service.description|striptags|linebreaksbr }}</p>
+                    
+                    <div class="row mt-4 g-3">
+                        <div class="col-md-6">
+                            <div class="fn-card" style="box-shadow:none;">
+                                <div class="fn-card__body">
+                                    <div class="fn-card__meta">Цена</div>
+                                    <div style="font-family: var(--fn-font-title); font-size: 28px;"><strong>{{ service.price }} ₽</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="fn-card" style="box-shadow:none;">
+                                <div class="fn-card__body">
+                                    <div class="fn-card__meta">Длительность</div>
+                                    <div style="font-family: var(--fn-font-title); font-size: 28px;"><strong>{{ service.duration_minutes }} мин</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <div class="fn-card__title" style="font-size:22px;">Мастера, предоставляющие эту услугу</div>
+                        <div class="row mt-2 g-3">
+                            {% for master in service.master_set.all %}
+                                <div class="col-md-6">
+                                    <a href="{% url 'main:master_detail' master.pk %}" class="text-decoration-none">
+                                        <div class="fn-card" style="box-shadow:none;">
+                                            <div class="fn-card__body">
+                                                <div class="fn-card__title" style="font-size:18px;">{{ master.full_name }}</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            {% empty %}
+                                <div class="fn-card__meta mt-2">Нет мастеров, предоставляющих эту услугу</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 d-flex flex-wrap gap-2 justify-content-between">
+                        <a href="{% url 'main:services' %}" class="fn-btn fn-btn--hero-outline fn-btn--page-sm">
+                            <i class="bi bi-arrow-left"></i> К списку услуг
+                        </a>
+                        <a href="{% url 'main:appointment_create' %}?service={{ service.id }}" class="fn-btn fn-btn--hero-primary fn-btn--page-sm">
+                            <i class="bi bi-calendar-check"></i> Записаться
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </section>
+</div>
+{% endblock %}

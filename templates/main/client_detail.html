@@ -1,0 +1,25 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<div class="main-content">
+    <h1 class="page-title">Информация о клиенте</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <h2>{{ client.user.get_full_name }}</h2>
+            <p><strong>ID:</strong> {{ client.pk }}</p>
+            <p><strong>Имя:</strong> {{ client.user.first_name }}</p>
+            <p><strong>Фамилия:</strong> {{ client.user.last_name }}</p>
+            <p><strong>Телефон:</strong> {{ client.user.phone }}</p>
+            <p><strong>Email:</strong> {{ client.user.email }}</p>
+            <p><strong>Дата рождения:</strong> {{ client.birth_date|default:"Не указана" }}</p>
+            <p><strong>Дата регистрации:</strong> {{ client.created_at|date:"d.m.Y" }}</p>
+        </div>
+    </div>
+
+    <div class="mt-3 d-flex flex-wrap gap-2">
+        <a href="{% url 'main:clients' %}" class="fn-btn fn-btn--hero-outline fn-btn--page-sm">Назад к списку</a>
+        <a href="{% url 'main:client_edit' client.pk %}" class="fn-btn fn-btn--hero-primary fn-btn--page-sm">Редактировать</a>
+    </div>
+</div>
+{% endblock %}

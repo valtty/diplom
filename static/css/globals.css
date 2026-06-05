@@ -1,0 +1,117 @@
+/* globals.css — токены и шрифты по макету Figma (node 51:173, file H2RifycuMvVgYCcNP614at) */
+
+@import url("https://fonts.googleapis.com/css2?family=Alex+Brush&family=Inter:wght@300;400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap");
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #ffffff;
+  color: #000000;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Figma: Alex Brush + Baskerville Old Face / Baskerville Cyrillic → Libre Baskerville; меню и текст — Inter */
+:root {
+  --fn-bg: #ffffff;
+  --fn-text: #000000;
+  --fn-muted: rgba(0, 0, 0, 0.72);
+
+  /* Из макета (get_design_context) */
+  --fn-figma-border: #bb4775;
+  --fn-figma-cta-fill: #ffd2e3;
+  --fn-figma-cta-alt: #f8bbd3;
+  --fn-figma-heading: #121212;
+  --fn-figma-logo: #060606;
+
+  --fn-accent: var(--fn-figma-border);
+  --fn-accent-2: #c8b6e2;
+  --fn-border: rgba(187, 71, 117, 0.35);
+  --fn-border-soft: rgba(187, 71, 117, 0.25);
+
+  --fn-radius-lg: 40px;
+  --fn-radius-md: 24px;
+  --fn-radius-sm: 16px;
+  --fn-radius-ui: 8px;
+  --fn-radius-btn-sm: 4px;
+
+  --fn-shadow: 0 6px 24px rgba(187, 71, 117, 0.12);
+  --fn-shadow-soft: 0 4px 20px rgba(0, 0, 0, 0.06);
+
+  --fn-font-brand: "Alex Brush", cursive;
+  --fn-font-title: "Libre Baskerville", "Baskerville Old Face", Georgia, "Times New Roman", serif;
+  --fn-font-body: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+  /* Совместимость со старыми классами */
+  --fn-pink: var(--fn-figma-cta-fill);
+  --fn-pink-soft: #ffe1f9;
+  --fn-pink-deep: var(--fn-figma-border);
+  --fn-pink-border: var(--fn-figma-border);
+  --fn-pink-hover: #a63d66;
+
+  /* Автозаполнение полей в Chrome/Safari: мягкий розовый вместо стандартного голубого */
+  --fn-input-autofill-bg: #fef5fa;
+}
+
+body {
+  font-family: var(--fn-font-body);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--fn-font-title);
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+.fn-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 110px;
+}
+
+@media (min-width: 768px) and (max-width: 1199px) {
+  .fn-container {
+    padding: 0 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .fn-container {
+    padding: 0 20px;
+  }
+}
