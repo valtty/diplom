@@ -1,1 +1,1 @@
-web: gunicorn lash_salon.wsgi
+web: gunicorn lash_salon.wsgi:application --bind 0.0.0.0:$PORT
