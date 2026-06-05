@@ -1,0 +1,1 @@
+web: gunicorn lash_salon.wsgi
