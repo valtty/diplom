@@ -2937,3 +2937,24 @@ body.modal-open {
   color: var(--fn-figma-border);
   font-size: 1rem;
 }
+
+.fn-burger {
+  color: var(--fn-text);
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+.fn-burger i {
+  color: var(--fn-text);
+}
+
+@media (max-width: 767px) {
+  .desktop .menu.is-open a,
+  .desktop .menu.is-open .text-wrapper-2 {
+    color: var(--fn-text) !important;
+  }
+
+  .desktop .menu.is-open a:visited {
+    color: var(--fn-text) !important;
+  }
+}
